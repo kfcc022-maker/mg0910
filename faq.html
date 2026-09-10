@@ -8,7 +8,6 @@
     :root {
       --bg: #f5f7fb;
       --surface: #ffffff;
-      --surface-soft: #f8fafc;
       --text: #172033;
       --muted: #667085;
       --line: #e4e7ec;
@@ -22,9 +21,7 @@
       --radius: 18px;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -34,18 +31,47 @@
       line-height: 1.6;
     }
 
-    button,
-    input {
-      font: inherit;
-    }
+    button, input { font: inherit; }
 
     .app {
       width: min(960px, calc(100% - 32px));
       margin: 56px auto;
     }
 
-    .hero {
-      margin-bottom: 22px;
+    .hero { margin-bottom: 22px; }
+
+    .hero-top {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 14px;
+    }
+
+    .home-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      padding: 9px 15px;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      background: var(--surface);
+      color: var(--primary);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 800;
+      box-shadow: 0 4px 14px rgba(16, 24, 40, 0.06);
+      transition: transform 0.2s, border-color 0.2s, background 0.2s;
+    }
+
+    .home-link:hover {
+      transform: translateY(-1px);
+      border-color: #b8c2e8;
+      background: var(--primary-soft);
+    }
+
+    .home-link:focus-visible {
+      outline: 3px solid rgba(49, 86, 211, 0.2);
+      outline-offset: 2px;
     }
 
     .eyebrow {
@@ -77,15 +103,8 @@
       box-shadow: var(--shadow);
     }
 
-    .search-row {
-      display: flex;
-      gap: 10px;
-    }
-
-    .search-box {
-      position: relative;
-      flex: 1;
-    }
+    .search-row { display: flex; gap: 10px; }
+    .search-box { position: relative; flex: 1; }
 
     .search-icon {
       position: absolute;
@@ -126,9 +145,7 @@
       font-weight: 700;
     }
 
-    .filter-wrap {
-      margin-top: 18px;
-    }
+    .filter-wrap { margin-top: 18px; }
 
     .filter-label {
       display: block;
@@ -138,11 +155,7 @@
       font-weight: 700;
     }
 
-    .filters {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
+    .filters { display: flex; flex-wrap: wrap; gap: 8px; }
 
     .filter-button {
       padding: 9px 15px;
@@ -186,10 +199,7 @@
       font-weight: 800;
     }
 
-    .results {
-      display: grid;
-      gap: 14px;
-    }
+    .results { display: grid; gap: 14px; }
 
     .faq-card {
       padding: 22px;
@@ -268,29 +278,19 @@
         margin: 28px auto;
       }
 
-      .search-panel,
-      .faq-card {
-        padding: 16px;
-      }
-
-      .search-row {
-        flex-direction: column;
-      }
-
-      .reset-button {
-        width: 100%;
-      }
-
-      .faq-card-top {
-        flex-direction: column-reverse;
-        gap: 8px;
-      }
+      .search-panel, .faq-card { padding: 16px; }
+      .search-row { flex-direction: column; }
+      .reset-button { width: 100%; }
+      .faq-card-top { flex-direction: column-reverse; gap: 8px; }
     }
   </style>
 </head>
 <body>
   <main class="app">
     <header class="hero">
+      <div class="hero-top">
+        <a class="home-link" href="./index.html" aria-label="메인 페이지로 이동">← 메인으로</a>
+      </div>
       <p class="eyebrow">INTERNAL FAQ</p>
       <h1>업무 FAQ 검색</h1>
       <p class="description">등록된 FAQ에서 질문이나 키워드로 필요한 안내를 찾아보세요.</p>
@@ -300,13 +300,7 @@
       <div class="search-row">
         <div class="search-box">
           <span class="search-icon" aria-hidden="true">⌕</span>
-          <input
-            id="searchInput"
-            type="search"
-            placeholder="질문이나 키워드를 입력하세요."
-            autocomplete="off"
-            aria-label="FAQ 검색어"
-          />
+          <input id="searchInput" type="search" placeholder="질문이나 키워드를 입력하세요." autocomplete="off" aria-label="FAQ 검색어" />
         </div>
         <button id="resetButton" class="reset-button" type="button">전체보기</button>
       </div>
@@ -334,38 +328,13 @@
   </main>
 
   <script>
-    // 첨부 JSON의 데이터만 사용합니다.
     const faqData = [
-      {
-        category: "교육",
-        question: "교육 신청은 어디에서 하나요?",
-        answer_seed: "교육 포털의 과정 검색 후 신청 메뉴를 사용합니다."
-      },
-      {
-        category: "교육",
-        question: "신청한 교육을 취소하려면 어떻게 하나요?",
-        answer_seed: "신청내역에서 취소 가능 여부를 확인합니다."
-      },
-      {
-        category: "문서",
-        question: "주간 업무보고에는 무엇을 넣어야 하나요?",
-        answer_seed: "주요 실적, 이슈, 다음 주 계획을 중심으로 작성합니다."
-      },
-      {
-        category: "IT",
-        question: "사내 시스템 접속이 되지 않습니다.",
-        answer_seed: "네트워크, 브라우저, 계정 상태를 순서대로 확인합니다."
-      },
-      {
-        category: "보안",
-        question: "ChatGPT에 내부 업무자료를 넣어도 되나요?",
-        answer_seed: "교육에서는 합성자료를 사용하고, 실제 자료는 조직의 보안 및 AI 사용 기준을 먼저 확인합니다."
-      },
-      {
-        category: "개인",
-        question: "질문",
-        answer_seed: "답변"
-      }
+      { category: "교육", question: "교육 신청은 어디에서 하나요?", answer_seed: "교육 포털의 과정 검색 후 신청 메뉴를 사용합니다." },
+      { category: "교육", question: "신청한 교육을 취소하려면 어떻게 하나요?", answer_seed: "신청내역에서 취소 가능 여부를 확인합니다." },
+      { category: "문서", question: "주간 업무보고에는 무엇을 넣어야 하나요?", answer_seed: "주요 실적, 이슈, 다음 주 계획을 중심으로 작성합니다." },
+      { category: "IT", question: "사내 시스템 접속이 되지 않습니다.", answer_seed: "네트워크, 브라우저, 계정 상태를 순서대로 확인합니다." },
+      { category: "보안", question: "ChatGPT에 내부 업무자료를 넣어도 되나요?", answer_seed: "교육에서는 합성자료를 사용하고, 실제 자료는 조직의 보안 및 AI 사용 기준을 먼저 확인합니다." },
+      { category: "개인", question: "질문", answer_seed: "답변" }
     ];
 
     const searchInput = document.getElementById("searchInput");
@@ -391,37 +360,24 @@
 
     function highlightText(text, terms) {
       if (!terms.length) return escapeHtml(text);
-
       const pattern = new RegExp(`(${terms.map(escapeRegExp).join("|")})`, "gi");
       const lowerTerms = terms.map(term => term.toLowerCase());
-
       return String(text)
         .split(pattern)
-        .map(part =>
-          lowerTerms.includes(part.toLowerCase())
-            ? `<mark>${escapeHtml(part)}</mark>`
-            : escapeHtml(part)
-        )
+        .map(part => lowerTerms.includes(part.toLowerCase()) ? `<mark>${escapeHtml(part)}</mark>` : escapeHtml(part))
         .join("");
     }
 
     function getSearchTerms() {
-      return searchInput.value
-        .trim()
-        .split(/\s+/)
-        .map(term => term.toLowerCase())
-        .filter(Boolean);
+      return searchInput.value.trim().split(/\s+/).map(term => term.toLowerCase()).filter(Boolean);
     }
 
     function renderResults() {
       const terms = getSearchTerms();
-
       const filtered = faqData.filter(item => {
         const categoryMatched = selectedCategory === "전체" || item.category === selectedCategory;
         if (!categoryMatched) return false;
-
         if (!terms.length) return true;
-
         const searchableText = `${item.question} ${item.answer_seed} ${item.category}`.toLowerCase();
         return terms.every(term => searchableText.includes(term));
       });
@@ -429,24 +385,20 @@
       resultCount.textContent = `총 ${filtered.length}건`;
 
       if (filtered.length === 0) {
-        results.innerHTML = `
-          <div class="empty-state" role="status">등록된 FAQ에서 답변을 찾을 수 없습니다.\n관련 담당부서 또는 공식 안내자료를 확인해 주세요.</div>
-        `;
+        results.innerHTML = `<div class="empty-state" role="status">등록된 FAQ에서 답변을 찾을 수 없습니다.\n관련 담당부서 또는 공식 안내자료를 확인해 주세요.</div>`;
         return;
       }
 
-      results.innerHTML = filtered
-        .map(item => `
-          <article class="faq-card">
-            <div class="faq-card-top">
-              <h3 class="question">${highlightText(item.question, terms)}</h3>
-              <span class="category-badge">${highlightText(item.category, terms)}</span>
-            </div>
-            <p class="answer-label">답변</p>
-            <p class="answer">${highlightText(item.answer_seed, terms)}</p>
-          </article>
-        `)
-        .join("");
+      results.innerHTML = filtered.map(item => `
+        <article class="faq-card">
+          <div class="faq-card-top">
+            <h3 class="question">${highlightText(item.question, terms)}</h3>
+            <span class="category-badge">${highlightText(item.category, terms)}</span>
+          </div>
+          <p class="answer-label">답변</p>
+          <p class="answer">${highlightText(item.answer_seed, terms)}</p>
+        </article>
+      `).join("");
     }
 
     function selectCategory(category) {
@@ -460,13 +412,7 @@
     }
 
     searchInput.addEventListener("input", renderResults);
-
-    filterButtons.forEach(button => {
-      button.addEventListener("click", () => {
-        selectCategory(button.dataset.category);
-      });
-    });
-
+    filterButtons.forEach(button => button.addEventListener("click", () => selectCategory(button.dataset.category)));
     resetButton.addEventListener("click", () => {
       searchInput.value = "";
       selectCategory("전체");
