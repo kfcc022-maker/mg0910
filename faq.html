@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>업무 FAQ 검색</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --surface: #ffffff;
+      --surface-soft: #f8fafc;
+      --text: #172033;
+      --muted: #667085;
+      --line: #e4e7ec;
+      --primary: #3156d3;
+      --primary-soft: #eef2ff;
+      --mark: #fff1a8;
+      --danger-soft: #fff7ed;
+      --danger-line: #fed7aa;
+      --danger-text: #9a3412;
+      --shadow: 0 12px 32px rgba(16, 24, 40, 0.08);
+      --radius: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Pretendard, "Noto Sans KR", "Apple SD Gothic Neo", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    .app {
+      width: min(960px, calc(100% - 32px));
+      margin: 56px auto;
+    }
+
+    .hero {
+      margin-bottom: 22px;
+    }
+
+    .eyebrow {
+      margin: 0 0 6px;
+      color: var(--primary);
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(30px, 5vw, 42px);
+      line-height: 1.25;
+      letter-spacing: -0.04em;
+    }
+
+    .description {
+      margin: 10px 0 0;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .search-panel {
+      padding: 22px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .search-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .search-box {
+      position: relative;
+      flex: 1;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #98a2b3;
+      pointer-events: none;
+      font-size: 18px;
+    }
+
+    #searchInput {
+      width: 100%;
+      height: 50px;
+      padding: 0 16px 0 44px;
+      border: 1px solid #d0d5dd;
+      border-radius: 12px;
+      outline: none;
+      background: #fff;
+      color: var(--text);
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    #searchInput:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(49, 86, 211, 0.12);
+    }
+
+    .reset-button {
+      min-width: 96px;
+      height: 50px;
+      padding: 0 18px;
+      border: 0;
+      border-radius: 12px;
+      background: var(--text);
+      color: #fff;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .filter-wrap {
+      margin-top: 18px;
+    }
+
+    .filter-label {
+      display: block;
+      margin-bottom: 10px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .filter-button {
+      padding: 9px 15px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #fff;
+      color: #475467;
+      cursor: pointer;
+      font-weight: 700;
+      transition: background 0.2s, color 0.2s, border-color 0.2s;
+    }
+
+    .filter-button:hover {
+      border-color: #b8c2e8;
+      background: #f8faff;
+    }
+
+    .filter-button.active {
+      border-color: var(--primary);
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .result-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 30px 2px 14px;
+    }
+
+    .result-header h2 {
+      margin: 0;
+      font-size: 20px;
+      letter-spacing: -0.02em;
+    }
+
+    .result-count {
+      color: var(--primary);
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .results {
+      display: grid;
+      gap: 14px;
+    }
+
+    .faq-card {
+      padding: 22px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+    }
+
+    .faq-card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 12px;
+    }
+
+    .question {
+      margin: 0;
+      font-size: 18px;
+      line-height: 1.5;
+      letter-spacing: -0.02em;
+    }
+
+    .category-badge {
+      flex: 0 0 auto;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: var(--primary-soft);
+      color: var(--primary);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .answer-label {
+      margin: 0 0 4px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .answer {
+      margin: 0;
+      color: #344054;
+      white-space: pre-wrap;
+    }
+
+    mark {
+      padding: 0 2px;
+      border-radius: 3px;
+      background: var(--mark);
+      color: inherit;
+      font-weight: 800;
+    }
+
+    .empty-state {
+      padding: 30px 24px;
+      border: 1px solid var(--danger-line);
+      border-radius: 16px;
+      background: var(--danger-soft);
+      color: var(--danger-text);
+      text-align: center;
+      font-weight: 700;
+      white-space: pre-line;
+    }
+
+    .source-note {
+      margin: 18px 2px 0;
+      color: #98a2b3;
+      font-size: 12px;
+      text-align: right;
+    }
+
+    @media (max-width: 640px) {
+      .app {
+        width: min(100% - 20px, 960px);
+        margin: 28px auto;
+      }
+
+      .search-panel,
+      .faq-card {
+        padding: 16px;
+      }
+
+      .search-row {
+        flex-direction: column;
+      }
+
+      .reset-button {
+        width: 100%;
+      }
+
+      .faq-card-top {
+        flex-direction: column-reverse;
+        gap: 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="hero">
+      <p class="eyebrow">INTERNAL FAQ</p>
+      <h1>업무 FAQ 검색</h1>
+      <p class="description">등록된 FAQ에서 질문이나 키워드로 필요한 안내를 찾아보세요.</p>
+    </header>
+
+    <section class="search-panel" aria-label="FAQ 검색 및 분류">
+      <div class="search-row">
+        <div class="search-box">
+          <span class="search-icon" aria-hidden="true">⌕</span>
+          <input
+            id="searchInput"
+            type="search"
+            placeholder="질문이나 키워드를 입력하세요."
+            autocomplete="off"
+            aria-label="FAQ 검색어"
+          />
+        </div>
+        <button id="resetButton" class="reset-button" type="button">전체보기</button>
+      </div>
+
+      <div class="filter-wrap">
+        <span class="filter-label">분류</span>
+        <div class="filters" id="categoryFilters" aria-label="FAQ 분류 필터">
+          <button class="filter-button active" type="button" data-category="전체">전체</button>
+          <button class="filter-button" type="button" data-category="교육">교육</button>
+          <button class="filter-button" type="button" data-category="문서">문서</button>
+          <button class="filter-button" type="button" data-category="IT">IT</button>
+          <button class="filter-button" type="button" data-category="보안">보안</button>
+        </div>
+      </div>
+    </section>
+
+    <section aria-live="polite" aria-label="FAQ 검색 결과">
+      <div class="result-header">
+        <h2>검색 결과</h2>
+        <span id="resultCount" class="result-count">총 0건</span>
+      </div>
+      <div id="results" class="results"></div>
+      <p class="source-note">답변은 등록된 FAQ 데이터에 있는 내용만 표시합니다.</p>
+    </section>
+  </main>
+
+  <script>
+    // 첨부 JSON의 데이터만 사용합니다.
+    const faqData = [
+      {
+        category: "교육",
+        question: "교육 신청은 어디에서 하나요?",
+        answer_seed: "교육 포털의 과정 검색 후 신청 메뉴를 사용합니다."
+      },
+      {
+        category: "교육",
+        question: "신청한 교육을 취소하려면 어떻게 하나요?",
+        answer_seed: "신청내역에서 취소 가능 여부를 확인합니다."
+      },
+      {
+        category: "문서",
+        question: "주간 업무보고에는 무엇을 넣어야 하나요?",
+        answer_seed: "주요 실적, 이슈, 다음 주 계획을 중심으로 작성합니다."
+      },
+      {
+        category: "IT",
+        question: "사내 시스템 접속이 되지 않습니다.",
+        answer_seed: "네트워크, 브라우저, 계정 상태를 순서대로 확인합니다."
+      },
+      {
+        category: "보안",
+        question: "ChatGPT에 내부 업무자료를 넣어도 되나요?",
+        answer_seed: "교육에서는 합성자료를 사용하고, 실제 자료는 조직의 보안 및 AI 사용 기준을 먼저 확인합니다."
+      },
+      {
+        category: "개인",
+        question: "질문",
+        answer_seed: "답변"
+      }
+    ];
+
+    const searchInput = document.getElementById("searchInput");
+    const results = document.getElementById("results");
+    const resultCount = document.getElementById("resultCount");
+    const resetButton = document.getElementById("resetButton");
+    const filterButtons = [...document.querySelectorAll(".filter-button")];
+
+    let selectedCategory = "전체";
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function escapeRegExp(value) {
+      return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    }
+
+    function highlightText(text, terms) {
+      if (!terms.length) return escapeHtml(text);
+
+      const pattern = new RegExp(`(${terms.map(escapeRegExp).join("|")})`, "gi");
+      const lowerTerms = terms.map(term => term.toLowerCase());
+
+      return String(text)
+        .split(pattern)
+        .map(part =>
+          lowerTerms.includes(part.toLowerCase())
+            ? `<mark>${escapeHtml(part)}</mark>`
+            : escapeHtml(part)
+        )
+        .join("");
+    }
+
+    function getSearchTerms() {
+      return searchInput.value
+        .trim()
+        .split(/\s+/)
+        .map(term => term.toLowerCase())
+        .filter(Boolean);
+    }
+
+    function renderResults() {
+      const terms = getSearchTerms();
+
+      const filtered = faqData.filter(item => {
+        const categoryMatched = selectedCategory === "전체" || item.category === selectedCategory;
+        if (!categoryMatched) return false;
+
+        if (!terms.length) return true;
+
+        const searchableText = `${item.question} ${item.answer_seed} ${item.category}`.toLowerCase();
+        return terms.every(term => searchableText.includes(term));
+      });
+
+      resultCount.textContent = `총 ${filtered.length}건`;
+
+      if (filtered.length === 0) {
+        results.innerHTML = `
+          <div class="empty-state" role="status">등록된 FAQ에서 답변을 찾을 수 없습니다.\n관련 담당부서 또는 공식 안내자료를 확인해 주세요.</div>
+        `;
+        return;
+      }
+
+      results.innerHTML = filtered
+        .map(item => `
+          <article class="faq-card">
+            <div class="faq-card-top">
+              <h3 class="question">${highlightText(item.question, terms)}</h3>
+              <span class="category-badge">${highlightText(item.category, terms)}</span>
+            </div>
+            <p class="answer-label">답변</p>
+            <p class="answer">${highlightText(item.answer_seed, terms)}</p>
+          </article>
+        `)
+        .join("");
+    }
+
+    function selectCategory(category) {
+      selectedCategory = category;
+      filterButtons.forEach(button => {
+        const isActive = button.dataset.category === category;
+        button.classList.toggle("active", isActive);
+        button.setAttribute("aria-pressed", String(isActive));
+      });
+      renderResults();
+    }
+
+    searchInput.addEventListener("input", renderResults);
+
+    filterButtons.forEach(button => {
+      button.addEventListener("click", () => {
+        selectCategory(button.dataset.category);
+      });
+    });
+
+    resetButton.addEventListener("click", () => {
+      searchInput.value = "";
+      selectCategory("전체");
+      searchInput.focus();
+    });
+
+    renderResults();
+  </script>
+</body>
+</html>
