@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>정기예금 금리 대시보드</title>
+  <style>
+    :root{--navy:#10253f;--navy2:#173a5e;--mint:#20b486;--mint2:#a7f3d0;--blue:#2f6fed;--ink:#142033;--muted:#68758a;--line:#dfe6ee;--bg:#f3f6f9;--white:#fff;--gold:#f2b84b;--shadow:0 10px 28px rgba(16,37,63,.08)}
+    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font-family:Pretendard,"Noto Sans KR",system-ui,-apple-system,"Segoe UI",sans-serif}
+    button,input,select{font:inherit}.wrap{max-width:1440px;margin:auto;padding:28px}
+    .hero{position:relative;overflow:hidden;background:linear-gradient(120deg,var(--navy),var(--navy2));color:#fff;border-radius:22px;padding:30px 34px;box-shadow:var(--shadow)}
+    .hero:after{content:"";position:absolute;width:330px;height:330px;border-radius:50%;right:-80px;top:-180px;background:rgba(32,180,134,.18)}
+    .eyebrow{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--mint2);letter-spacing:.08em}.dot{width:8px;height:8px;border-radius:50%;background:#52e0b3;box-shadow:0 0 0 5px rgba(82,224,179,.15)}
+    h1{margin:11px 0 8px;font-size:clamp(26px,3.3vw,42px);letter-spacing:-.045em}.sub{margin:0;color:#cfdae6;font-size:15px}.hero-meta{position:absolute;z-index:1;right:34px;bottom:30px;text-align:right;color:#dce6ef;font-size:13px}.hero-meta strong{display:block;color:#fff;font-size:16px;margin-bottom:4px}
+    .db-nav{position:sticky;top:12px;z-index:20;display:flex;align-items:center;gap:7px;margin:14px 0 18px;padding:9px;background:rgba(255,255,255,.94);border:1px solid #e1e7ee;border-radius:16px;box-shadow:0 8px 24px rgba(16,37,63,.09);backdrop-filter:blur(12px);overflow-x:auto}.db-nav::-webkit-scrollbar{height:0}.nav-brand{display:flex;align-items:center;gap:8px;padding:0 10px 0 5px;margin-right:2px;border-right:1px solid var(--line);white-space:nowrap;font-size:12px;font-weight:800;color:var(--navy)}.nav-brand i{width:28px;height:28px;display:grid;place-items:center;border-radius:9px;background:var(--navy);color:#fff;font-style:normal}.nav-btn{display:flex;align-items:center;gap:7px;height:38px;padding:0 12px;border:0;border-radius:10px;background:transparent;color:#58667a;font-size:12px;font-weight:750;white-space:nowrap;cursor:pointer}.nav-btn:hover{background:#f0f4f8;color:var(--navy)}.nav-btn.active{background:var(--navy);color:#fff}.nav-btn .mini{min-width:19px;height:19px;display:grid;place-items:center;border-radius:6px;background:rgba(16,37,63,.08);font-size:10px}.nav-btn.active .mini{background:rgba(255,255,255,.15)}.coming-toast{position:fixed;left:50%;bottom:28px;z-index:50;transform:translate(-50%,20px);display:flex;align-items:center;gap:10px;max-width:calc(100% - 30px);padding:13px 17px;border-radius:12px;background:var(--navy);color:#fff;box-shadow:0 12px 30px rgba(16,37,63,.25);font-size:13px;font-weight:700;opacity:0;pointer-events:none;transition:.25s}.coming-toast.show{opacity:1;transform:translate(-50%,0)}.coming-toast span{color:#8df0cf}
+    .metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:18px 0}.card{background:#fff;border:1px solid #e6ebf0;border-radius:18px;padding:20px;box-shadow:0 5px 18px rgba(16,37,63,.045)}
+    .metric-label{display:flex;align-items:center;justify-content:space-between;color:var(--muted);font-size:13px;font-weight:700}.badge{padding:5px 8px;border-radius:999px;background:#edf9f5;color:#07835e;font-size:11px}.metric-value{margin:11px 0 5px;font-size:30px;font-weight:800;letter-spacing:-.04em}.metric-note{font-size:12px;color:var(--muted)}
+    .layout{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(340px,.65fr);gap:18px}.section-head{display:flex;justify-content:space-between;align-items:end;gap:12px;margin-bottom:18px}.section-head h2{margin:0;font-size:18px;letter-spacing:-.025em}.section-head p{margin:4px 0 0;color:var(--muted);font-size:12px}
+    .chart{display:flex;flex-direction:column;gap:14px}.chart-row{display:grid;grid-template-columns:112px 1fr 56px;align-items:center;gap:11px}.bank{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.track{height:14px;background:#eaf0f5;border-radius:999px;overflow:hidden}.bar{height:100%;width:var(--w);border-radius:999px;background:linear-gradient(90deg,var(--blue),#4c90ff);transform-origin:left;animation:grow .65s ease both}.chart-row:first-child .bar{background:linear-gradient(90deg,#10a87a,#36d5a7)}.rate{font-size:13px;font-weight:800;text-align:right}@keyframes grow{from{transform:scaleX(0)}}
+    .legend{display:flex;gap:16px;margin-top:18px;padding-top:14px;border-top:1px solid var(--line);font-size:12px;color:var(--muted)}.legend span:before{content:"";display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:6px;background:var(--blue)}.legend span:first-child:before{background:var(--mint)}
+    .insights{display:grid;gap:11px}.insight{display:flex;gap:12px;border:1px solid var(--line);border-radius:14px;padding:14px;background:#fbfcfd}.num{flex:0 0 28px;height:28px;border-radius:9px;display:grid;place-items:center;background:var(--navy);color:#fff;font-weight:800;font-size:12px}.insight strong{font-size:13px}.insight p{margin:4px 0 0;color:var(--muted);font-size:12px;line-height:1.5}
+    .table-card{margin-top:18px}.toolbar{display:flex;gap:10px;flex-wrap:wrap}.control{height:40px;border:1px solid var(--line);border-radius:11px;background:#fff;padding:0 12px;color:var(--ink);outline:none}.search{min-width:230px}.control:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(47,111,237,.1)}.btn{height:40px;padding:0 14px;border:0;border-radius:11px;background:var(--navy);color:#fff;font-weight:700;cursor:pointer}.btn:hover{background:#203e61}.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:14px}table{width:100%;border-collapse:collapse;min-width:930px}th{background:#f5f7fa;color:#526076;font-size:12px;text-align:left;padding:12px 14px;border-bottom:1px solid var(--line);white-space:nowrap}td{padding:14px;border-bottom:1px solid #edf0f3;font-size:13px;vertical-align:middle}tbody tr:hover{background:#f8fbff}tbody tr:last-child td{border-bottom:0}.institution{font-weight:800}.category{display:inline-block;padding:5px 8px;border-radius:999px;background:#eef3f8;color:#4a5b70;font-size:11px;font-weight:700}.rate-cell{font-weight:800}.max{color:#087c5a}.gap{color:#d47700}.conditions{max-width:330px;color:var(--muted);line-height:1.45}.rank{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:8px;background:#edf2f7;font-weight:800;font-size:11px}.rank.top{background:#fff0c9;color:#946000}.foot{display:flex;justify-content:space-between;gap:15px;margin-top:12px;font-size:11px;color:#7b8798;line-height:1.6}.empty{padding:30px;text-align:center;color:var(--muted);display:none}
+    @media(max-width:950px){.metrics{grid-template-columns:repeat(2,1fr)}.layout{grid-template-columns:1fr}.hero-meta{position:static;text-align:left;margin-top:20px}.wrap{padding:18px}}@media(max-width:560px){.metrics{grid-template-columns:1fr}.hero{padding:24px}.wrap{padding:12px}.search{min-width:100%;flex:1}.section-head{align-items:start;flex-direction:column}.foot{display:block}.nav-brand span{display:none}.nav-brand{padding-right:7px}}
+  </style>
+</head>
+<body>
+<main class="wrap">
+  <header class="hero">
+    <div class="eyebrow"><span class="dot"></span>MARKET RATE MONITOR</div>
+    <h1>정기예금 금리 대시보드</h1>
+    <p class="sub">주요 금융권 대표상품 · 1년 만기 · 기본금리 및 최고 우대금리 비교</p>
+    <div class="hero-meta"><strong>데이터 기준일 2026.09.10</strong>Supabase · public.bank_rates</div>
+  </header>
+
+  <nav class="db-nav" aria-label="데이터베이스 메뉴">
+    <div class="nav-brand"><i>DB</i><span>데이터 조회</span></div>
+    <button class="nav-btn" type="button" data-target="overview"><span class="mini">⌂</span>전체 현황</button>
+    <button class="nav-btn" type="button" data-target="members"><span class="mini">40</span>조합원</button>
+    <button class="nav-btn" type="button" data-target="branches"><span class="mini">5</span>지점</button>
+    <button class="nav-btn" type="button" data-target="deposit_accounts"><span class="mini">54</span>예금계좌</button>
+    <button class="nav-btn" type="button" data-target="loans"><span class="mini">18</span>대출</button>
+    <button class="nav-btn" type="button" data-target="transactions"><span class="mini">294</span>거래내역</button>
+    <button class="nav-btn active" type="button" data-target="bank_rates" aria-current="page"><span class="mini">6</span>금리비교</button>
+  </nav>
+
+  <section class="metrics" aria-label="핵심 지표">
+    <article class="card"><div class="metric-label">최고 우대금리 <span class="badge">TOP</span></div><div class="metric-value">4.20%</div><div class="metric-note">덕양신협 · 유니온정기예탁금</div></article>
+    <article class="card"><div class="metric-label">최저 최고금리 <span class="badge">LOW</span></div><div class="metric-value">3.45%</div><div class="metric-note">KB국민은행 · 신한은행</div></article>
+    <article class="card"><div class="metric-label">평균 최고금리 <span class="badge">AVG</span></div><div class="metric-value">3.78%</div><div class="metric-note">6개 상품 단순평균</div></article>
+    <article class="card"><div class="metric-label">은행 간 금리차 <span class="badge">SPREAD</span></div><div class="metric-value">0.75%p</div><div class="metric-note">최고금리 기준 최대−최소</div></article>
+  </section>
+
+  <section class="layout">
+    <article class="card">
+      <div class="section-head"><div><h2>최고 우대금리 순위</h2><p>각 상품의 1년 기준 최고 적용 가능 금리</p></div><span class="badge">단위: 연 %</span></div>
+      <div class="chart" id="chart"></div>
+      <div class="legend"><span>시장 최고</span><span>기타 상품</span></div>
+    </article>
+    <aside class="card">
+      <div class="section-head"><div><h2>핵심 인사이트</h2><p>비교 시 확인할 포인트</p></div></div>
+      <div class="insights">
+        <div class="insight"><span class="num">1</span><div><strong>상호금융 상품이 선두</strong><p>덕양신협이 4.20%로 전체 비교군 중 가장 높습니다.</p></div></div>
+        <div class="insight"><span class="num">2</span><div><strong>저축은행 2곳은 3.90%</strong><p>SBI·OK저축은행은 최고금리가 같지만 변동 주기가 다릅니다.</p></div></div>
+        <div class="insight"><span class="num">3</span><div><strong>우대조건 영향 확인 필요</strong><p>Sh수협은행은 기본 2.70%에서 조건 충족 시 3.75%입니다.</p></div></div>
+      </div>
+    </aside>
+  </section>
+
+  <section class="card table-card">
+    <div class="section-head">
+      <div><h2>금융기관별 상세 비교</h2><p id="countText">총 6개 상품</p></div>
+      <div class="toolbar">
+        <input id="search" class="control search" type="search" placeholder="금융기관 또는 상품 검색" aria-label="검색">
+        <select id="category" class="control" aria-label="업권 분류"><option value="all">전체 업권</option><option>시중은행</option><option>수협계열 은행</option><option>저축은행</option><option>상호금융</option></select>
+        <select id="sort" class="control" aria-label="정렬"><option value="max-desc">최고금리 높은순</option><option value="base-desc">기본금리 높은순</option><option value="name">금융기관 가나다순</option></select>
+        <button id="download" class="btn" type="button">CSV 다운로드</button>
+      </div>
+    </div>
+    <div class="table-wrap"><table><thead><tr><th>순위</th><th>금융기관</th><th>업권</th><th>상품명</th><th>기본금리</th><th>최고금리</th><th>우대폭</th><th>주요 조건</th></tr></thead><tbody id="rows"></tbody></table><div id="empty" class="empty">조건에 맞는 상품이 없습니다.</div></div>
+    <div class="foot"><span>※ 금리는 연이율이며 세전 기준입니다. 실제 가입 전 금융기관의 최신 공시와 상품설명서를 확인하세요.</span><span>평균 기본금리 3.60% · 비교상품 6개</span></div>
+  </section>
+</main>
+<div id="comingToast" class="coming-toast" role="status" aria-live="polite"><span id="toastMenu"></span> 메뉴는 데이터 연결 준비 중입니다.</div>
+<script>
+const data=[
+ {institution:'덕양신협',category:'상호금융',product:'유니온정기예탁금',base:4.20,max:4.20,gap:0.00,conditions:'비대면 전용, 별도 우대조건 없음'},
+ {institution:'SBI저축은행',category:'저축은행',product:'정기예금(1년 변동금리)',base:3.90,max:3.90,gap:0.00,conditions:'별도 우대조건 없음, 12개월 주기로 금리 변동'},
+ {institution:'OK저축은행',category:'저축은행',product:'OK e-안심앱플러스정기예금6',base:3.90,max:3.90,gap:0.00,conditions:'앱 전용, 별도 우대조건 없음, 6개월 회전식 변동금리'},
+ {institution:'Sh수협은행',category:'수협계열 은행',product:'Sh첫만남우대예금',base:2.70,max:3.75,gap:1.05,conditions:'첫 거래 최대 1.00%p, 마케팅 동의 0.05%p 등 총 1.05%p'},
+ {institution:'KB국민은행',category:'시중은행',product:'KB Star 정기예금',base:3.45,max:3.45,gap:0.00,conditions:'별도 우대조건 없음, KB스타뱅킹 비대면 가입 중심'},
+ {institution:'신한은행',category:'시중은행',product:'쏠편한 정기예금',base:3.45,max:3.45,gap:0.00,conditions:'별도 우대조건 없음, 신한 SOL뱅크 비대면 가입'}
+];
+const $=s=>document.querySelector(s); let visible=[...data];
+function renderChart(){ $('#chart').innerHTML=[...data].sort((a,b)=>b.max-a.max).map((d,i)=>`<div class="chart-row"><div class="bank" title="${d.institution}">${d.institution}</div><div class="track"><div class="bar" style="--w:${(d.max/4.5*100).toFixed(1)}%;animation-delay:${i*.05}s"></div></div><div class="rate">${d.max.toFixed(2)}%</div></div>`).join('') }
+function render(){const q=$('#search').value.trim().toLowerCase(),cat=$('#category').value,sort=$('#sort').value;visible=data.filter(d=>(cat==='all'||d.category===cat)&&(`${d.institution} ${d.product} ${d.conditions}`.toLowerCase().includes(q)));visible.sort(sort==='base-desc'?(a,b)=>b.base-a.base:sort==='name'?(a,b)=>a.institution.localeCompare(b.institution,'ko'):(a,b)=>b.max-a.max||b.base-a.base);$('#rows').innerHTML=visible.map((d,i)=>`<tr><td><span class="rank ${i===0&&sort==='max-desc'?'top':''}">${i+1}</span></td><td class="institution">${d.institution}</td><td><span class="category">${d.category}</span></td><td>${d.product}</td><td class="rate-cell">${d.base.toFixed(2)}%</td><td class="rate-cell max">${d.max.toFixed(2)}%</td><td class="rate-cell ${d.gap?'gap':''}">${d.gap.toFixed(2)}%p</td><td class="conditions">${d.conditions}</td></tr>`).join('');$('#countText').textContent=`총 ${visible.length}개 상품`;$('#empty').style.display=visible.length?'none':'block'}
+function download(){const head=['금융기관','업권','상품명','기본금리(%)','최고우대금리(%)','우대폭(%p)','주요우대조건','기준일'];const esc=v=>`"${String(v).replaceAll('"','""')}"`;const csv='\ufeff'+[head,...visible.map(d=>[d.institution,d.category,d.product,d.base.toFixed(2),d.max.toFixed(2),d.gap.toFixed(2),d.conditions,'2026-09-10'])].map(r=>r.map(esc).join(',')).join('\r\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download='bank_rates_filtered_2026-09-10.csv';a.click();URL.revokeObjectURL(a.href)}
+let toastTimer;
+document.querySelectorAll('.nav-btn').forEach(btn=>btn.addEventListener('click',()=>{
+  if(btn.dataset.target==='bank_rates'){
+    document.querySelector('.metrics').scrollIntoView({behavior:'smooth',block:'start'});
+    return;
+  }
+  const toast=$('#comingToast');$('#toastMenu').textContent=btn.textContent.trim().replace(/^\d+/, '').trim();
+  toast.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove('show'),2400);
+}));
+['#search','#category','#sort'].forEach(s=>$(s).addEventListener('input',render));$('#download').addEventListener('click',download);renderChart();render();
+</script>
+</body>
+</html>
