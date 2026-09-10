@@ -73,6 +73,14 @@
 
   .brand p { margin: 0; opacity: 0.84; font-size: 14px; }
 
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
   .header-badge {
     padding: 8px 13px;
     border-radius: 999px;
@@ -80,6 +88,36 @@
     border: 1px solid rgba(255,255,255,0.22);
     font-size: 13px;
     white-space: nowrap;
+  }
+
+  .faq-link-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 38px;
+    padding: 8px 14px;
+    border-radius: 10px;
+    background: #ffffff;
+    color: var(--mg-blue);
+    border: 1px solid rgba(255,255,255,0.65);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 800;
+    white-space: nowrap;
+    box-shadow: 0 5px 16px rgba(0,0,0,0.12);
+    transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+  }
+
+  .faq-link-btn:hover {
+    background: #f3f8ff;
+    transform: translateY(-1px);
+    box-shadow: 0 7px 20px rgba(0,0,0,0.16);
+  }
+
+  .faq-link-btn:focus-visible {
+    outline: 3px solid rgba(255,255,255,0.45);
+    outline-offset: 2px;
   }
 
   .container { max-width: 1440px; margin: 0 auto; padding: 26px 20px 60px; }
@@ -500,7 +538,8 @@
   @media (max-width: 700px) {
     .page-header { padding: 22px 16px; }
     .header-inner { display: block; }
-    .header-badge { display: inline-block; margin-top: 14px; }
+    .header-actions { justify-content: flex-start; margin-top: 14px; }
+    .header-badge { display: inline-block; }
     .container { padding: 16px 12px 40px; }
     .input-panel, .result-panel { padding: 16px; }
     .field-row, .radio-grid { grid-template-columns: 1fr; }
@@ -526,7 +565,10 @@
         <p>고객 조건에 맞춰 예상 상환금액과 월별 상환계획을 확인하세요.</p>
       </div>
     </div>
-    <div class="header-badge">창구상담 · 웹페이지용 시뮬레이션</div>
+    <div class="header-actions">
+      <div class="header-badge">창구상담 · 웹페이지용 시뮬레이션</div>
+      <a class="faq-link-btn" href="./faq.html" aria-label="업무 FAQ 페이지로 이동">FAQ 바로가기 →</a>
+    </div>
   </div>
 </header>
 
