@@ -1,0 +1,15 @@
+{
+  "functions": {
+    "api/dashboard-crud.js": {
+      "maxDuration": 10
+    }
+  },
+  "headers": [
+    {
+      "source": "/dashboard_crud.html",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-store" }
+      ]
+    }
+  ]
+}

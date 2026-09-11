@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>금융 데이터 CRUD 관리</title>
+  <style>
+    :root{--navy:#10253f;--navy2:#173a5e;--mint:#20b486;--blue:#2f6fed;--ink:#142033;--muted:#68758a;--line:#dfe6ee;--bg:#f3f6f9;--white:#fff;--danger:#d64545;--warn:#d99216;--shadow:0 10px 28px rgba(16,37,63,.08)}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Pretendard,"Noto Sans KR",system-ui,-apple-system,"Segoe UI",sans-serif}button,input,select{font:inherit}.wrap{max-width:1600px;margin:auto;padding:26px}.hero{position:relative;overflow:hidden;background:linear-gradient(120deg,var(--navy),var(--navy2));color:#fff;border-radius:22px;padding:28px 32px;box-shadow:var(--shadow)}.hero:after{content:"";position:absolute;width:320px;height:320px;border-radius:50%;right:-70px;top:-190px;background:rgba(32,180,134,.18)}.eyebrow{font-size:12px;color:#a7f3d0;font-weight:800;letter-spacing:.1em}.hero h1{margin:9px 0 7px;font-size:34px;letter-spacing:-.04em}.hero p{margin:0;color:#d4dee9;font-size:14px}.hero .status{position:absolute;right:32px;bottom:28px;display:flex;align-items:center;gap:8px;font-size:12px;color:#d9e3ed}.status-dot{width:9px;height:9px;border-radius:50%;background:#e6ac42;box-shadow:0 0 0 4px rgba(230,172,66,.16)}.status.online .status-dot{background:var(--mint);box-shadow:0 0 0 4px rgba(32,180,134,.15)}.status.error .status-dot{background:#f06b6b}
+    .tabs{display:flex;gap:8px;margin:15px 0 18px;padding:8px;background:rgba(255,255,255,.96);border:1px solid var(--line);border-radius:16px;box-shadow:0 8px 24px rgba(16,37,63,.07);position:sticky;top:10px;z-index:20}.tab{height:42px;padding:0 18px;border:0;border-radius:11px;background:transparent;color:#5f6e82;font-weight:800;cursor:pointer}.tab:hover{background:#f1f5f8}.tab.active{background:var(--navy);color:#fff}.tab small{display:inline-grid;place-items:center;min-width:22px;height:22px;margin-right:7px;border-radius:7px;background:rgba(16,37,63,.08)}.tab.active small{background:rgba(255,255,255,.16)}
+    .workspace{display:grid;grid-template-columns:minmax(330px,420px) minmax(0,1fr);gap:18px;align-items:start}.card{background:#fff;border:1px solid #e4eaf0;border-radius:18px;box-shadow:0 5px 18px rgba(16,37,63,.045)}.form-card{position:sticky;top:78px;padding:22px}.card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:18px}.card-head h2{margin:0;font-size:19px;letter-spacing:-.025em}.card-head p{margin:5px 0 0;color:var(--muted);font-size:12px;line-height:1.5}.mode{padding:6px 9px;border-radius:999px;background:#edf9f5;color:#087f5f;font-size:11px;font-weight:850}.mode.edit{background:#eef4ff;color:#2f6fed}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}.field{display:flex;flex-direction:column;gap:6px}.field.full{grid-column:1/-1}.field label{font-size:12px;font-weight:800;color:#4c5b70}.field input,.field select{width:100%;height:43px;padding:0 12px;border:1px solid var(--line);border-radius:11px;background:#fff;color:var(--ink);outline:none}.field input:focus,.field select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(47,111,237,.1)}.field input[readonly]{background:#f5f7fa;color:#8792a3}.hint{font-size:11px;color:#8a95a5}.form-actions{display:flex;gap:9px;margin-top:18px}.primary,.secondary,.danger-btn,.grid-btn{border:0;border-radius:10px;cursor:pointer;font-weight:800}.primary{height:44px;flex:1;background:var(--navy);color:#fff}.primary:hover{background:#1c3c60}.secondary{height:44px;padding:0 15px;background:#eef2f6;color:#49586d}.secondary:hover{background:#e4eaf0}
+    .list-card{padding:20px;min-width:0}.toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}.toolbar-left{display:flex;align-items:center;gap:10px;min-width:0}.search{width:min(360px,42vw);height:40px;border:1px solid var(--line);border-radius:11px;padding:0 12px;outline:none}.search:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(47,111,237,.1)}.count{font-size:12px;color:var(--muted);white-space:nowrap}.refresh{height:40px;padding:0 13px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--navy);font-weight:800;cursor:pointer}.refresh:hover{background:#f4f7fa}.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:14px;max-height:680px}table{width:100%;border-collapse:collapse;min-width:980px}th{position:sticky;top:0;z-index:2;background:#f5f7fa;color:#536176;font-size:12px;text-align:left;padding:12px 13px;border-bottom:1px solid var(--line);white-space:nowrap}td{padding:12px 13px;border-bottom:1px solid #edf1f4;font-size:13px;white-space:nowrap}tbody tr:hover{background:#fbfcfe}.actions{display:flex;gap:6px}.grid-btn{height:30px;padding:0 10px;font-size:11px}.edit-btn{background:#edf3ff;color:#2c63d6}.delete-btn{background:#fff0f0;color:#c53d3d}.empty,.loading{padding:55px 20px;text-align:center;color:var(--muted);font-size:13px}.money{font-variant-numeric:tabular-nums;font-weight:750}.badge{display:inline-flex;padding:4px 7px;border-radius:999px;font-size:11px;font-weight:800;background:#eff3f7;color:#56657a}.badge.bad{background:#fff0f0;color:#c94141}.badge.good{background:#edf9f5;color:#087f5f}
+    .notice{margin-top:12px;padding:11px 12px;border-radius:11px;background:#fff9ec;border:1px solid #f5dfad;color:#815c13;font-size:11px;line-height:1.55}.toast{position:fixed;right:24px;bottom:24px;z-index:50;min-width:260px;max-width:420px;padding:13px 15px;border-radius:12px;background:var(--navy);color:#fff;box-shadow:0 14px 34px rgba(16,37,63,.24);opacity:0;transform:translateY(10px);pointer-events:none;transition:.2s}.toast.show{opacity:1;transform:translateY(0)}.toast.error{background:#a93636}.toast.success{background:#087f5f}.confirm-backdrop{position:fixed;inset:0;background:rgba(12,26,44,.44);display:none;place-items:center;z-index:60;padding:20px}.confirm-backdrop.show{display:grid}.confirm-box{width:min(440px,100%);background:#fff;border-radius:18px;padding:22px;box-shadow:0 18px 50px rgba(0,0,0,.2)}.confirm-box h3{margin:0 0 8px}.confirm-box p{margin:0;color:var(--muted);font-size:13px;line-height:1.55}.confirm-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}.danger-btn{height:40px;padding:0 14px;background:var(--danger);color:#fff}.confirm-actions .secondary{height:40px}
+    @media(max-width:1050px){.workspace{grid-template-columns:1fr}.form-card{position:static}.hero .status{position:static;margin-top:14px}.tabs{top:5px}.search{width:100%}.toolbar{align-items:stretch;flex-direction:column}.toolbar-left{width:100%}.toolbar-left .search{flex:1}}@media(max-width:640px){.wrap{padding:12px}.hero{padding:23px}.hero h1{font-size:27px}.tabs{overflow-x:auto}.tab{white-space:nowrap}.form-grid{grid-template-columns:1fr}.field.full{grid-column:auto}}
+  </style>
+</head>
+<body>
+<main class="wrap">
+  <header class="hero">
+    <div class="eyebrow">DATA MANAGEMENT CONSOLE</div>
+    <h1>조합원 · 예적금 · 대출 관리</h1>
+    <p>조회 내용을 확인하면서 등록, 수정, 삭제할 수 있는 업무용 CRUD 화면</p>
+    <div id="connectionStatus" class="status"><span class="status-dot"></span><span>연결 확인 중</span></div>
+  </header>
+
+  <nav class="tabs" aria-label="관리 메뉴">
+    <button class="tab active" data-entity="members" type="button"><small>01</small>조합원 관리</button>
+    <button class="tab" data-entity="deposit_accounts" type="button"><small>02</small>예적금 관리</button>
+    <button class="tab" data-entity="loans" type="button"><small>03</small>대출 관리</button>
+  </nav>
+
+  <section class="workspace">
+    <aside class="card form-card">
+      <div class="card-head">
+        <div><h2 id="formTitle">조합원 등록</h2><p id="formDesc">좌측 입력 필드에서 신규 데이터를 등록합니다.</p></div>
+        <span id="formMode" class="mode">등록</span>
+      </div>
+      <form id="crudForm" autocomplete="off"><div id="formFields" class="form-grid"></div><div class="form-actions"><button id="saveBtn" class="primary" type="submit">등록하기</button><button id="resetBtn" class="secondary" type="button">초기화</button></div></form>
+      <div class="notice">삭제는 실제 데이터에 반영됩니다. 조합원 또는 예적금 계좌에 연결된 하위 데이터가 있으면 참조 무결성을 위해 삭제가 제한될 수 있습니다.</div>
+    </aside>
+
+    <section class="card list-card">
+      <div class="card-head">
+        <div><h2 id="listTitle">조합원 조회</h2><p id="listDesc">조합원 전체 목록을 확인하고 행 단위로 수정 또는 삭제합니다.</p></div>
+      </div>
+      <div class="toolbar">
+        <div class="toolbar-left"><input id="searchInput" class="search" type="search" placeholder="이름, 번호, 전화번호 검색"><span id="rowCount" class="count">0건</span></div>
+        <button id="refreshBtn" class="refresh" type="button">↻ 새로고침</button>
+      </div>
+      <div id="tableWrap" class="table-wrap"><div class="loading">데이터를 불러오는 중입니다.</div></div>
+    </section>
+  </section>
+</main>
+<div id="toast" class="toast" role="status"></div>
+<div id="confirmBackdrop" class="confirm-backdrop"><div class="confirm-box"><h3>데이터를 삭제할까요?</h3><p id="confirmText"></p><div class="confirm-actions"><button id="confirmCancel" class="secondary" type="button">취소</button><button id="confirmDelete" class="danger-btn" type="button">삭제</button></div></div></div>
+<script>
+const API='/api/dashboard-crud';
+const TODAY=new Date().toLocaleDateString('sv-SE',{timeZone:'Asia/Seoul'});
+const configs={
+ members:{label:'조합원',pk:'member_id',title:'조합원 관리',search:'이름, 번호, 전화번호 검색',fields:[
+  {name:'member_id',label:'조합원 번호',type:'number',readonly:true,placeholder:'자동 생성'},
+  {name:'name',label:'조합원 이름',type:'text',required:true,full:true},
+  {name:'birth_date',label:'생년월일',type:'date',required:true},
+  {name:'gender',label:'성별',type:'select',required:true,options:[['M','남성'],['F','여성']]},
+  {name:'join_date',label:'가입일',type:'date',required:true,default:TODAY},
+  {name:'branch_id',label:'소속 지점',type:'branch',required:true},
+  {name:'phone',label:'전화번호',type:'tel',required:true,full:true,placeholder:'010-0000-0000'}
+ ],columns:[['member_id','번호'],['name','이름'],['birth_date','생년월일'],['gender','성별'],['join_date','가입일'],['branch_id','지점'],['phone','전화번호']]},
+ deposit_accounts:{label:'예적금',pk:'account_id',title:'예적금 관리',search:'계좌번호, 조합원, 계좌종류 검색',fields:[
+  {name:'account_id',label:'계좌 ID',type:'number',readonly:true,placeholder:'자동 생성'},
+  {name:'member_id',label:'조합원',type:'member',required:true},
+  {name:'branch_id',label:'소속 지점',type:'branch',required:true},
+  {name:'account_type',label:'계좌 종류',type:'select',required:true,options:[['정기예금','정기예금'],['정기적금','정기적금'],['자유적금','자유적금']]},
+  {name:'open_date',label:'개설일',type:'date',required:true,default:TODAY},
+  {name:'balance',label:'잔액',type:'number',required:true,min:'0',step:'1',placeholder:'예: 3000000'},
+  {name:'interest_rate',label:'금리 (%)',type:'number',required:true,min:'0',step:'0.01',placeholder:'예: 3.20'}
+ ],columns:[['account_id','계좌 ID'],['member_id','조합원'],['branch_id','지점'],['account_type','계좌 종류'],['open_date','개설일'],['balance','잔액'],['interest_rate','금리']]},
+ loans:{label:'대출',pk:'loan_id',title:'대출 관리',search:'대출번호, 조합원, 대출종류, 상태 검색',fields:[
+  {name:'loan_id',label:'대출 ID',type:'number',readonly:true,placeholder:'자동 생성'},
+  {name:'member_id',label:'조합원',type:'member',required:true},
+  {name:'branch_id',label:'소속 지점',type:'branch',required:true},
+  {name:'loan_type',label:'대출 종류',type:'select',required:true,options:[['신용대출','신용대출'],['전세자금대출','전세자금대출'],['주택담보대출','주택담보대출']]},
+  {name:'loan_amount',label:'대출금액',type:'number',required:true,min:'0',step:'1',placeholder:'예: 20000000'},
+  {name:'interest_rate',label:'금리 (%)',type:'number',required:true,min:'0',step:'0.01',placeholder:'예: 4.19'},
+  {name:'start_date',label:'실행일',type:'date',required:true,default:TODAY},
+  {name:'due_date',label:'만기일',type:'date',required:true},
+  {name:'status',label:'상태',type:'select',required:true,options:[['정상','정상'],['연체','연체'],['완제','완제']]}
+ ],columns:[['loan_id','대출 ID'],['member_id','조합원'],['branch_id','지점'],['loan_type','대출 종류'],['loan_amount','대출금액'],['interest_rate','금리'],['start_date','실행일'],['due_date','만기일'],['status','상태']]}
+};
+let active='members',rows=[],branches=[],members=[],editingId=null,pendingDelete=null;
+const $=s=>document.querySelector(s);const esc=v=>String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+function toast(message,type='success'){const el=$('#toast');el.textContent=message;el.className=`toast ${type} show`;clearTimeout(toast.timer);toast.timer=setTimeout(()=>el.classList.remove('show'),2600)}
+function setStatus(ok,text){const el=$('#connectionStatus');el.className=`status ${ok===true?'online':ok===false?'error':''}`;el.querySelector('span:last-child').textContent=text}
+async function request(url=API,options={}){const res=await fetch(url,{cache:'no-store',headers:{'Content-Type':'application/json','Accept':'application/json',...(options.headers||{})},...options});let data={};try{data=await res.json()}catch(_){ }if(!res.ok)throw new Error(data.error||`요청 실패 (${res.status})`);return data}
+const branchName=id=>branches.find(b=>Number(b.branch_id)===Number(id))?.branch_name||`지점 ${id}`;
+const memberName=id=>{const m=members.find(m=>Number(m.member_id)===Number(id));return m?`${m.name} (#${m.member_id})`:`조합원 ${id}`};
+function fieldHtml(f){let input='';const common=`name="${f.name}" id="f_${f.name}" ${f.required?'required':''} ${f.readonly?'readonly':''}`;if(f.type==='select')input=`<select ${common}><option value="">선택</option>${f.options.map(([v,l])=>`<option value="${esc(v)}">${esc(l)}</option>`).join('')}</select>`;else if(f.type==='branch')input=`<select ${common}><option value="">지점 선택</option>${branches.map(b=>`<option value="${b.branch_id}">${esc(b.branch_name)} · ${esc(b.region)}</option>`).join('')}</select>`;else if(f.type==='member')input=`<select ${common}><option value="">조합원 선택</option>${members.map(m=>`<option value="${m.member_id}">#${m.member_id} ${esc(m.name)} · ${esc(branchName(m.branch_id))}</option>`).join('')}</select>`;else input=`<input ${common} type="${f.type}" value="${esc(f.default||'')}" placeholder="${esc(f.placeholder||'')}" ${f.min!=null?`min="${f.min}"`:''} ${f.step?`step="${f.step}"`:''}>`;return `<div class="field ${f.full?'full':''}"><label for="f_${f.name}">${esc(f.label)}</label>${input}${f.readonly?'<span class="hint">등록 시 자동으로 생성됩니다.</span>':''}</div>`}
+function buildForm(){const c=configs[active];$('#formFields').innerHTML=c.fields.map(fieldHtml).join('');$('#formTitle').textContent=`${c.label} 등록`;$('#formDesc').textContent='좌측 입력 필드에서 신규 데이터를 등록합니다.';$('#formMode').textContent='등록';$('#formMode').className='mode';$('#saveBtn').textContent='등록하기';editingId=null;if(active!=='members'){const memberSel=$('#f_member_id');memberSel?.addEventListener('change',()=>{const m=members.find(x=>Number(x.member_id)===Number(memberSel.value));if(m)$('#f_branch_id').value=String(m.branch_id)})}}
+function resetForm(){buildForm()}
+function getPayload(){const c=configs[active],data={};for(const f of c.fields){if(f.readonly)continue;const el=$(`#f_${f.name}`);let v=el.value;if(f.type==='number')v=v===''?null:Number(v);if(f.type==='branch'||f.type==='member')v=v===''?null:Number(v);data[f.name]=v}return data}
+function formatCell(key,v){if(key==='branch_id')return esc(branchName(v));if(key==='member_id')return esc(memberName(v));if(key==='gender')return v==='F'?'여성':v==='M'?'남성':esc(v);if(['balance','loan_amount'].includes(key))return `<span class="money">${Number(v).toLocaleString('ko-KR')}원</span>`;if(key==='interest_rate')return `${Number(v).toFixed(2)}%`;if(key==='status')return `<span class="badge ${v==='연체'?'bad':v==='정상'?'good':''}">${esc(v)}</span>`;return esc(v)}
+function searchable(row){return Object.values(row).join(' ')+' '+(row.branch_id?branchName(row.branch_id):'')+' '+(row.member_id?memberName(row.member_id):'')}
+function renderTable(){const c=configs[active],q=$('#searchInput').value.trim().toLowerCase();const filtered=rows.filter(r=>searchable(r).toLowerCase().includes(q));$('#rowCount').textContent=`${filtered.length}건`;if(!filtered.length){$('#tableWrap').innerHTML='<div class="empty">조회된 데이터가 없습니다.</div>';return}$('#tableWrap').innerHTML=`<table><thead><tr>${c.columns.map(([,l])=>`<th>${esc(l)}</th>`).join('')}<th>관리</th></tr></thead><tbody>${filtered.map(r=>`<tr>${c.columns.map(([k])=>`<td>${formatCell(k,r[k])}</td>`).join('')}<td><div class="actions"><button class="grid-btn edit-btn" data-edit="${r[c.pk]}">수정</button><button class="grid-btn delete-btn" data-delete="${r[c.pk]}">삭제</button></div></td></tr>`).join('')}</tbody></table>`;document.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>startEdit(Number(b.dataset.edit)));document.querySelectorAll('[data-delete]').forEach(b=>b.onclick=()=>askDelete(Number(b.dataset.delete)))}
+function startEdit(id){const c=configs[active],r=rows.find(x=>Number(x[c.pk])===Number(id));if(!r)return;editingId=id;c.fields.forEach(f=>{const el=$(`#f_${f.name}`);if(el)el.value=r[f.name]??''});$('#formTitle').textContent=`${c.label} 수정`;$('#formDesc').textContent=`${c.pk} ${id} 데이터를 수정하고 있습니다.`;$('#formMode').textContent='수정';$('#formMode').className='mode edit';$('#saveBtn').textContent='수정 저장';window.scrollTo({top:0,behavior:'smooth'})}
+function askDelete(id){const c=configs[active],r=rows.find(x=>Number(x[c.pk])===Number(id));pendingDelete=id;$('#confirmText').textContent=`${c.label} ${id}${r?.name?` (${r.name})`:''} 데이터를 삭제합니다. 이 작업은 되돌릴 수 없습니다.`;$('#confirmBackdrop').classList.add('show')}
+async function loadBootstrap(){const data=await request(`${API}?entity=bootstrap`);branches=data.branches||[];members=data.members||[]}
+async function loadRows(){setStatus(null,'조회 중');$('#tableWrap').innerHTML='<div class="loading">데이터를 불러오는 중입니다.</div>';try{const data=await request(`${API}?entity=${encodeURIComponent(active)}`);rows=data.rows||[];renderTable();setStatus(true,'서버 연결 정상')}catch(e){setStatus(false,'연결 오류');$('#tableWrap').innerHTML=`<div class="empty">${esc(e.message)}</div>`}}
+async function switchEntity(entity){
+ if(!configs[entity]||entity===active)return;
+ active=entity;
+ rows=[]; editingId=null; pendingDelete=null;
+ document.querySelectorAll('.tab').forEach(b=>{
+   const on=b.dataset.entity===active;
+   b.classList.toggle('active',on);
+   b.setAttribute('aria-selected',on?'true':'false');
+ });
+ const c=configs[active];
+ $('#listTitle').textContent=`${c.label} 조회`;
+ $('#listDesc').textContent=`${c.label} 전체 목록을 확인하고 행 단위로 수정 또는 삭제합니다.`;
+ $('#searchInput').placeholder=c.search;
+ $('#searchInput').value='';
+ // 서버 응답과 관계없이 탭 클릭 즉시 폼/그리드 영역을 전환한다.
+ buildForm();
+ $('#rowCount').textContent='조회 중';
+ $('#tableWrap').innerHTML=`<div class="loading">${esc(c.label)} 데이터를 불러오는 중입니다.</div>`;
+ try{
+   await loadBootstrap();
+   buildForm();
+   await loadRows();
+ }catch(e){
+   setStatus(false,'연결 오류');
+   $('#tableWrap').innerHTML=`<div class="empty">${esc(e.message)}</div>`;
+ }
+}
+$('#crudForm').addEventListener('submit',async e=>{e.preventDefault();const c=configs[active];const payload=getPayload();$('#saveBtn').disabled=true;try{if(editingId==null){await request(`${API}?entity=${active}`,{method:'POST',body:JSON.stringify({data:payload})});toast(`${c.label} 등록이 완료되었습니다.`)}else{await request(`${API}?entity=${active}`,{method:'PATCH',body:JSON.stringify({id:editingId,data:payload})});toast(`${c.label} 수정이 완료되었습니다.`)}await loadBootstrap();buildForm();await loadRows()}catch(err){toast(err.message,'error')}finally{$('#saveBtn').disabled=false}});
+$('#resetBtn').onclick=resetForm;$('#refreshBtn').onclick=async()=>{await loadBootstrap();buildForm();await loadRows()};$('#searchInput').addEventListener('input',renderTable);document.querySelectorAll('.tab').forEach(b=>{b.setAttribute('aria-selected',b.classList.contains('active')?'true':'false');b.addEventListener('click',()=>switchEntity(b.dataset.entity));});$('#confirmCancel').onclick=()=>{$('#confirmBackdrop').classList.remove('show');pendingDelete=null};$('#confirmDelete').onclick=async()=>{if(pendingDelete==null)return;const id=pendingDelete,c=configs[active];try{await request(`${API}?entity=${active}&id=${id}`,{method:'DELETE'});toast(`${c.label} 삭제가 완료되었습니다.`);$('#confirmBackdrop').classList.remove('show');pendingDelete=null;await loadBootstrap();buildForm();await loadRows()}catch(e){toast(e.message,'error');$('#confirmBackdrop').classList.remove('show')}};
+(async()=>{try{await loadBootstrap();buildForm();await loadRows()}catch(e){setStatus(false,'연결 오류');toast(e.message,'error')}})();
+</script>
+</body>
+</html>
